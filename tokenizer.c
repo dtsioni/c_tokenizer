@@ -74,6 +74,12 @@ char *TKGetNextToken( TokenizerT * tk ) {
  */
 
 int main(int argc, char **argv) {
+  char * token;
   TokenizerT* tokenizer = TKCreate(argv[1]);
+  token = TKGetNextToken(tokenizer);
+  while(token != NULL){
+    printf("%s\n", token);
+    token = TKGetNextToken(tokenizer);
+  }
   return 0;
 }
