@@ -75,6 +75,5 @@ char *TKGetNextToken( TokenizerT * tk ) {
 
 int main(int argc, char **argv) {
   TokenizerT* tokenizer = TKCreate(argv[1]);
-  printf("%s\n", tokenizer->inputStream);
   return 0;
 }
