@@ -62,8 +62,13 @@ void TKDestroy( TokenizerT * tk ) {
  */
 
 char *TKGetNextToken( TokenizerT * tk ) {
+  char * token;
+  token = FSM(tk);
+  return token;
+}
 
-  return NULL;
+char *FSM( TokenizerT * tk ){
+
 }
 
 /*
