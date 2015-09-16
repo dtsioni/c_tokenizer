@@ -8,6 +8,9 @@
  */
 
 struct TokenizerT_ {
+  char * inputStream;
+  int index;
+  int state;
 };
 
 typedef struct TokenizerT_ TokenizerT;
@@ -27,8 +30,11 @@ typedef struct TokenizerT_ TokenizerT;
  */
 
 TokenizerT *TKCreate( char * ts ) {
-
-  return NULL;
+  struct TokenizerT* foo = (struct TokenizerT*)malloc(sizeof(struct TokenizerT));
+  foo->inputStream = ts;
+  foo->index = 0;
+  foo->state = 0;
+  return foo;
 }
 
 /*
@@ -39,6 +45,7 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
+  free tk;
 }
 
 /*
