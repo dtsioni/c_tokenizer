@@ -31,7 +31,7 @@ typedef struct TokenizerT_ TokenizerT;
  */
 
 TokenizerT *TKCreate( char * ts ) {
-  struct TokenizerT* foo = (struct TokenizerT*)malloc(sizeof(struct TokenizerT));
+  TokenizerT* foo = (TokenizerT*)malloc(sizeof(TokenizerT));
   foo->inputStream = ts;
   foo->index = 0;
   foo->state = 0;
@@ -46,7 +46,7 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
-  free tk;
+  free(tk);
 }
 
 /*
@@ -74,6 +74,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
  */
 
 int main(int argc, char **argv) {
-
+  TokenizerT* tokenizer = TKCreate(argv[1]);
+  printf("%s\n", tokenizer->inputStream);
   return 0;
 }
