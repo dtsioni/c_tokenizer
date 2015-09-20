@@ -269,11 +269,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 16:
-      case 17:
-      case 18:
-        resultOutput(type, token);
-        return token;
       case 19:
         if( currentChar == '=' ){
           tk->state = 20;
@@ -283,9 +278,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 20:
-        resultOutput(type, token);
-        return token;
       case 21:
         if( currentChar == '&' ){
           tk->state = 22;
@@ -298,10 +290,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 22:
-      case 23:
-        resultOutput(type, token);
-        return token;
       case 24:
         if( currentChar == '=' ){
           tk->state = 25;
@@ -311,9 +299,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 25:
-        resultOutput(type, token);
-        return token;
       case 26:
         if( currentChar == '+' ){
           tk->state = 27;
@@ -326,10 +311,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 27:
-      case 28:
-        resultOutput(type, token);
-        return token;
       case 29:
         if( currentChar == '=' ){
           tk->state = 30;
@@ -339,9 +320,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 30:
-        resultOutput(type, token);
-        return token;
       case 31:
         if( currentChar == '=' ){
           tk->state = 32;
@@ -351,9 +329,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 32:
-        resultOutput(type, token);
-        return token;
       case 33:
         if( currentChar == '>' ){
           tk->state = 34;
@@ -375,10 +350,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 35:
-      case 36:
-        resultOutput(type, token);
-        return token;
       case 37:
         if( currentChar == '<' ){
           tk->state = 38;
@@ -400,10 +371,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 39:
-      case 40:
-        resultOutput(type, token);
-        return token;
       case 41:
         if( currentChar == '=' ){
           tk->state = 42;
@@ -413,9 +380,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 42:
-        resultOutput(type, token);
-        return token;
       case 43:
         if( currentChar == '=' ){
           tk->state = 44;
@@ -425,9 +389,6 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 44:
-        resultOutput(type, token);
-        return token;
       case 45:
         if( currentChar == '|' ){
           tk->state = 46;
@@ -440,8 +401,12 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      case 46:
-      case 47:
+      // all of our leaf nodes that just print their token
+      case 16: case 17: case 18: case 20:
+      case 22: case 23: case 25: case 27:
+      case 28: case 30: case 32: case 35:
+      case 36: case 39: case 40: case 42:
+      case 44: case 46: case 47:
         resultOutput(type, token);
         return token;
     }
