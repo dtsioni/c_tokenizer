@@ -1,0 +1,112 @@
+testcase 1:
+	input:
+		" array[xyz ] = pi 3.14159e-10 "
+	expected output:
+		word "array"
+		left square bracket "["
+		word "xyz"
+		right square bracket "]"
+		assignment "="
+		word "pi"
+		float "3.14159e-10"
+testcase 2:
+	input:
+		"char *TKGetNextToken( TokenizerT * tk ) {
+			char * token;
+			tk->state = 1;
+			token = FSM(tk);
+			return token;
+		}"
+	expected output:
+		word "char"
+		multiply/indirect "*"
+		word "TKGetNextToken"
+		left parenthesis "("
+		word "TokenizerT"
+		multiply/indirect "*"
+		word "tk"
+		right parenthesis ")"
+		left curly brace "{"
+		word "char"
+		multiply/indirect "*"
+		word "token"
+		statement terminator ";"
+		word "tk"
+		structure pointer "->"
+		word "state"
+		assignment "="
+		integer "1"
+		statement terminator ";"
+		word "token"
+		assignment "="
+		word "FSM"
+		left parenthesis "("
+		word "tk"
+		right parenthesis ")"
+		statement terminator ";"
+		word "return"
+		word "token"
+		statement terminator ";"
+		right curly brace "}"
+
+testcase 3:
+	input:
+		" 
+	 	
+	 	
+	 	
+	 	
+ 	
+ 	
+	 	            " (this is a series of tabs, new lines, and spaces)
+	expected output:
+		(nothing)
+testcase 4:
+	input:
+		"0x4356abdc 0777 [] "
+	expected output:
+		hexadecimal "0x4356abdc"
+		octal "0777"
+		left square bracket "["
+		right square bracket "]"
+testcase 5:
+	input:
+		"today is a beautiful day"
+	expected output:
+		word "today"
+		word "is"
+		word "a"
+		word "beautiful"
+		word "day"
+testcase 6:
+	input:
+		"gcc -Wall -g -o tokenizer tokenizer.c"
+	expected output:
+		word "gcc"
+		minus/subtract "-"
+		word "Wall"
+		minus/subtract "-"
+		word "g"
+		minus/subtract "-"
+		word "o"
+		word "tokenizer"
+		word "tokenizer"
+		dot operator "."
+		word "c"
+testcase 7:
+	input
+		"abc123.45"
+	expected output:
+		word "abc123"
+		dot operator "."
+		integer "45"
+
+
+	
+
+	
+		
+	
+
+
+

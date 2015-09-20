@@ -1,3 +1,7 @@
+/*
+ * Daniel Tsioni 150007096
+ * Gavriel Tsioni 150005575
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +18,9 @@ TokenizerT *TKCreate( char * ts ) {
   TokenizerT* foo = (TokenizerT*)malloc(sizeof(TokenizerT));
 
   foo->inputStream = ts;
+  /* index will keep track of how far down our input stream we have tokenized */
   foo->index = 0;
+  /* state will keep track of which state in our fsm we are at */
   foo->state = 0;
 
   return foo;
@@ -23,31 +29,42 @@ TokenizerT *TKCreate( char * ts ) {
 void TKDestroy( TokenizerT * tk ) {
   free(tk);
 }
-
+/* resultOutput will print to the terminal the type of the token we have tokenized, and the token itself */
 void resultOutput( char * name, char * token ){
   printf("%s \"%s\"\n", name, token);
 }
-
+/* escapeCharacterResultOutput will output to the terminal the hex value of any escape characters we encounter */
 void escapeCharacterResultOutput( char * escapeCharacter){
   printf("escape character: \"[0x%x]\"\n", *escapeCharacter);
 }
 
 char *FSM( TokenizerT * tk ){
+  /* we will keep track of the current char we are on, as well as the next one */
   char currentChar;
   char nextChar;
+  /* this variable will be used to build our token, char by char */
   char * token;
+  /* temp is a temporary string variable to help us concatenate our char to our token string */
   char * temp;
-  char * type = "malformed";
+  /* type will keep track of which token our token is at any given moment */
+  char * type;
 
   temp = (char *)malloc(sizeof(char)*2);
   token = (char *)malloc(sizeof(char));
-
+  type  = "malformed";
   token[0] = '\0';
 
   while(1){
+    /*
+     * here we set these variables to the current character in our input stream we are sending through the fsm, and the next one
+     * we keep track of the next one to watch out for the end of string
+     */
     currentChar = *(tk->inputStream + tk->index);
     nextChar = *(tk->inputStream + tk->index + 1);
-    /* if we encounter a space but we don't have a token, just skip the spaces. if we do have a token, the space ends the token so return it */
+    /*
+     * if we encounter a whitespace but we don't have a token, just skip all the whitespaces
+     * if we do have a token, the whitespace ends the token so we return it
+     */
     if( token[0] == '\0' ){
       if(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
         while(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
@@ -66,15 +83,30 @@ char *FSM( TokenizerT * tk ){
         return token;
       }
     }
-
+    /* if we have reached the end of the string, by skipping all the white space */
     if(currentChar == '\0'){
       return NULL;
     }
-
+    /*
+     * this switch statement represents our fsm, where each case is a unique state
+     * each state will then transition based on the current char
+     * each state will also set the type of the token before each transition
+     * the state is based on what the token would be, if it ended at that state in the fsm as is
+     * our fsm is pictured in the readme
+     */
     switch(tk->state){
+      /* case 1 represents state 1 in our fsm. the full fsm is pictured in our read me */
       case 1:
+        /* if our current char is a letter, upper or lower case */
         if( ( currentChar >= 'a' && currentChar <= 'z' ) || ( currentChar >= 'A' && currentChar <= 'Z' ) ){
+          /* then we transition to state 14, as described in our fsm */
           tk->state = 14;
+          /*
+           * if the token were to end at state 14, we know it would be of type 'word'.
+           * at most transitions in the fsm, the type is being similarly set.
+           * this helps because we don't have to have knowledge of the next characters when we tokenize.
+           * we know we can return the token at any time, because the type is being reliably updated.
+           */
           type = "word";
         }else if( currentChar == '0' ){
           tk->state = 2;
@@ -149,7 +181,7 @@ char *FSM( TokenizerT * tk ){
           tk->state = 57;
           type = "comma operator";
         }else{
-          /* this character is not in any token our fsm will recognize */
+          /* this character is not in any token our fsm will recognize, and is an 'escape character'. we simply print it and return it, and then continue tokenizing */
           temp[0] = currentChar;
           strcat(token, temp);
           escapeCharacterResultOutput(token);
@@ -166,7 +198,6 @@ char *FSM( TokenizerT * tk ){
         }else if( currentChar == '.' ){
           tk->state = 6;
         }else{
-          /* zero */
           resultOutput(type, token);
           return token;
         }
@@ -440,7 +471,10 @@ char *FSM( TokenizerT * tk ){
           return token;
         }
         break;
-      // all of our leaf nodes that just print their token
+      /*
+       * all of these cases are leaf nodes of our fsm that simply print and return their token, indicating the end of that token
+       * we grouped them together to take advantage of the fall through, so we don't have to repeat that code too much
+       */
       case 16: case 17: case 18: case 20:
       case 22: case 23: case 25: case 27:
       case 28: case 30: case 32: case 35:
@@ -452,17 +486,18 @@ char *FSM( TokenizerT * tk ){
         resultOutput(type, token);
         return token;
     }
+    /* if we get to this point, then we have to send the next char into the fsm */
+    /* we advance to the next char in our input stream */
     tk->index = tk->index + 1;
-    // add char to tokenizer
+    /* then concatenate the current char to our token */
     temp[0] = currentChar;
     strcat(token, temp);
-
+    /* finally we check to see if we are at the end of our input stream. if we are, we return the token as is */
     if(nextChar == '\0'){
       resultOutput(type, token);
       return token;
     }
   }
-
   return NULL;
 }
 
@@ -499,9 +534,10 @@ int main(int argc, char **argv) {
     printf("error: wrong number of arguments\n");
     return 1;
   }
+  /* our tokenizer will hold the input stream, given in argv[1], how far in the input stream it has tokenized, and the state in the fsm it currently is in */
   tokenizer = TKCreate(argv[1]);
   token = TKGetNextToken(tokenizer);
-
+  /* this loop will get all tokens in the input stream */
   while(token != NULL){
     token = TKGetNextToken(tokenizer);
   }
