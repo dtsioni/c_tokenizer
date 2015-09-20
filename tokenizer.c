@@ -68,17 +68,6 @@ char *FSM( TokenizerT * tk ){
       return NULL;
     }
 
-    // check for white space
-    /*if( nextChar == 0x20 || nextChar == 0x09 || ( nextChar >= 0x0a && nextChar <= 0x0d )){
-      printf("whitespace found\n");
-      endOfToken = 1;
-    }*/
-    printf("Current char is: %c Next char is: %c\n", currentChar, nextChar);
-    printf("Current state is: %d\n", tk->state);
-    // add the current character to the end of our token string
-
-
-
     switch(tk->state){
       /* this is the starting state of our fsm */
       case 1:
@@ -502,7 +491,6 @@ int main(int argc, char **argv) {
   tokenizer = TKCreate(argv[1]);
   token = TKGetNextToken(tokenizer);
   while(token != NULL){
-    printf("got token: %s\n", token);
     token = TKGetNextToken(tokenizer);
   }
   return 0;
