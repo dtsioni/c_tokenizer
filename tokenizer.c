@@ -29,7 +29,7 @@ void TKDestroy( TokenizerT * tk ) {
 }
 
 void resultOutput( char * name, char * token ){
-  printf("%s %s\n", name, token);
+  printf("%s \"%s\"\n", name, token);
 }
 
 char *FSM( TokenizerT * tk ){
@@ -43,23 +43,18 @@ char *FSM( TokenizerT * tk ){
   token = (char *)malloc(sizeof(char));
 
   token[0] = '\0';
-  // loop will run until our token is returned
-
 
   while(1){
-
-    //printf("flag %d loop\n", __LINE__);
-    //find the state of our fsm that our tokenizer is on
-
     currentChar = *(tk->inputStream + tk->index);
     nextChar = *(tk->inputStream + tk->index + 1);
-    //skip all white space to get to the next token
+
     if(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
       while(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
           tk->index = tk->index + 1;
           currentChar = *(tk->inputStream + tk->index);
           nextChar = *(tk->inputStream + tk->index + 1);
       }
+
       resultOutput(type, token);
       return token;
     }
@@ -69,14 +64,11 @@ char *FSM( TokenizerT * tk ){
     }
 
     switch(tk->state){
-      /* this is the starting state of our fsm */
       case 1:
-      //printf("flag %d entered switch case 1\n", __LINE__);
         if( ( currentChar >= 'a' && currentChar <= 'z' ) || ( currentChar >= 'A' && currentChar <= 'Z' ) ){
           tk->state = 14;
           type = "word";
         }else if( currentChar == '0' ){
-          //printf("flag %d\n", __LINE__);
           tk->state = 2;
           type = "zero";
         }else if( currentChar >= '1' && currentChar <= '9' ){
@@ -119,8 +111,11 @@ char *FSM( TokenizerT * tk ){
           tk->state = 45;
           type = "bitwise or";
         }else{
-          /* this is a character not recognized in any token */
+          /* this character is not in any token our fsm will recognize */
+          temp[0] = currentChar;
+          strcat(token, temp);
           resultOutput(type, token);
+          tk->index = tk->index + 1;
           return token;
         }
         break;
@@ -148,6 +143,7 @@ char *FSM( TokenizerT * tk ){
         }
         break;
       case 4:
+        type = "malformed";
         if(( currentChar >= '0' && currentChar <= '9' ) || (currentChar >= 'A' && currentChar <= 'F') || (currentChar >= 'a' && currentChar <= 'f') ){
           tk->state = 5;
           type = "hexadecimal";
@@ -165,6 +161,8 @@ char *FSM( TokenizerT * tk ){
         }
         break;
       case 6:
+        type = "malformed";
+
         if( currentChar >= '0' && currentChar <= '9' ){
           tk->state = 7;
           type = "float";
@@ -197,6 +195,7 @@ char *FSM( TokenizerT * tk ){
         }
         break;
       case 9:
+        type = "malformed";
         if( currentChar >= '0' && currentChar <= '9' ){
           tk->state = 10;
           type = "float";
@@ -217,6 +216,7 @@ char *FSM( TokenizerT * tk ){
         }
         break;
       case 11:
+        type = "malformed";
         if( currentChar >= '0' && currentChar <= '9' ){
           tk->state = 13;
           type = "float";
@@ -228,6 +228,7 @@ char *FSM( TokenizerT * tk ){
         }
         break;
       case 12:
+        type = "malformed";
         if( currentChar >= '0' && currentChar <= '9' ){
           tk->state = 13;
           type = "float";
