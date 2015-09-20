@@ -4,9 +4,7 @@
 
 struct TokenizerT_ {
   char * inputStream;
-
   int index;
-
   int state;
 };
 
@@ -16,9 +14,7 @@ TokenizerT *TKCreate( char * ts ) {
   TokenizerT* foo = (TokenizerT*)malloc(sizeof(TokenizerT));
 
   foo->inputStream = ts;
-
   foo->index = 0;
-
   foo->state = 0;
 
   return foo;
@@ -47,16 +43,24 @@ char *FSM( TokenizerT * tk ){
   while(1){
     currentChar = *(tk->inputStream + tk->index);
     nextChar = *(tk->inputStream + tk->index + 1);
-
-    if(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
-      while(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
-          tk->index = tk->index + 1;
-          currentChar = *(tk->inputStream + tk->index);
-          nextChar = *(tk->inputStream + tk->index + 1);
+    /* if we encounter a space but we don't have a token, just skip the spaces. if we do have a token, the space ends the token so return it */
+    if( token[0] == '\0' ){
+      if(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
+        while(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
+            tk->index = tk->index + 1;
+            currentChar = *(tk->inputStream + tk->index);
+        }
       }
-
-      resultOutput(type, token);
-      return token;
+    }else{
+      if(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
+        while(currentChar == 0x20 || currentChar == 0x09 || ( currentChar >= 0x0a && currentChar <= 0x0d)){
+            tk->index = tk->index + 1;
+            currentChar = *(tk->inputStream + tk->index);
+        }
+        /* a space ends a token */
+        resultOutput(type, token);
+        return token;
+      }
     }
 
     if(currentChar == '\0'){
@@ -114,8 +118,11 @@ char *FSM( TokenizerT * tk ){
           /* this character is not in any token our fsm will recognize */
           temp[0] = currentChar;
           strcat(token, temp);
+
           resultOutput(type, token);
+
           tk->index = tk->index + 1;
+
           return token;
         }
         break;
@@ -459,5 +466,6 @@ int main(int argc, char **argv) {
   while(token != NULL){
     token = TKGetNextToken(tokenizer);
   }
+  TKDestroy(tokenizer);
   return 0;
 }
